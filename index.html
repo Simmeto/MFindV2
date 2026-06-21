@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGKEIT Find — Бюро находок МГКЭИТ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ХЕДЕР -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo-block">
+                <div class="logo" onclick="showTab('items')">
+                    <span class="logo-icon">🔗</span>
+                    MGKEIT Find
+                </div>
+                <div class="college-subtitle">ГБПОУ МГКЭИТ • Бюро находок</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="campus-selector">
+                    🏫 Корпус:
+                    <select id="header-campus" onchange="switchCampus(this.value)">
+                        <option value="all">Все корпуса</option>
+                        <option value="biryulyovo" selected>Бирюлёво</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="showTab('add')">+ Объявление</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="hero-section">
+        <div class="hero-inner">
+            <div class="hero-badge">🏫 ГБПОУ МГКЭИТ</div>
+            <h1>Потерял что-то в колледже?<br>Нашёл чужую вещь?</h1>
+            <p>Бюро находок Московского государственного колледжа электромеханики и информационных технологий.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary btn-lg" onclick="showTab('add')">📸 Я НАШЁЛ вещь</button>
+                <button class="btn btn-outline btn-lg" onclick="showTab('add')">🔍 Я ПОТЕРЯЛ вещь</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="main-content">
+        <div class="filters-bar" id="filters-bar">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('all')">Все</button>
+                <button class="tab" onclick="switchTab('lost')">🔍 Потери</button>
+                <button class="tab" onclick="switchTab('found')">📸 Находки</button>
+            </div>
+            <div class="campus-filter">
+                🏫 Корпус:
+                <select id="filter-campus" onchange="switchCampus(this.value)">
+                    <option value="all">Все корпуса</option>
+                    <option value="biryulyovo" selected>Бирюлёво</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="items-grid" id="items-grid"></div>
+
+        <div class="empty-state" id="empty-state">
+            <span class="icon">📭</span>
+            <h3>Объявлений пока нет</h3>
+            <p>Стань первым, кто опубликует находку или потерю!</p>
+        </div>
+
+        <!-- ФОРМА -->
+        <div class="section-hidden" id="add-section">
+            <div class="form-card">
+                <h2>📝 Новое объявление</h2>
+                <form id="add-form" onsubmit="return handleSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label"><span class="required">*</span> Тип</label>
+                        <select class="form-select" id="item-type" required>
+                            <option value="">Выберите...</option>
+                            <option value="lost">🔍 Я ПОТЕРЯЛ</option>
+                            <option value="found">📸 Я НАШЁЛ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span class="required">*</span> Название</label>
+                        <input type="text" class="form-input" id="item-title" placeholder="Например: Чёрный рюкзак" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Категория</label>
+                            <select class="form-select" id="item-category">
+                                <option value="documents">📄 Документы</option>
+                                <option value="electronics">📱 Электроника</option>
+                                <option value="clothing">👕 Одежда</option>
+                                <option value="keys">🔑 Ключи</option>
+                                <option value="other">📦 Другое</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Корпус</label>
+                            <select class="form-select" id="item-campus">
+                                <option value="biryulyovo" selected>🏫 Бирюлёво</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Где именно?</label>
+                        <input type="text" class="form-input" id="item-location" placeholder="Аудитория 305, 3 этаж">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-textarea" id="item-desc" placeholder="Цвет, особые приметы..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📷 Фото</label>
+                        <div class="file-upload-area" id="upload-area">
+                            <span class="upload-icon">🖼️</span>
+                            <div class="upload-text">Выберите файл или перетащите</div>
+                            <div class="upload-hint">PNG, JPG, WebP до 5 МБ</div>
+                            <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" onchange="handleFileSelect(event)">
+                        </div>
+                        <div id="upload-preview-container"></div>
+                    </div>
+                    <div class="form-group" id="reward-group" style="display:none;">
+                        <label class="form-label">💰 Вознаграждение (₽)</label>
+                        <input type="number" class="form-input" id="item-reward" placeholder="Сумма" min="0">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Опубликовать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Детали</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ФУТЕР -->
+    <footer class="footer">
+        <p><strong>MGKEIT Find</strong> — ГБПОУ МГКЭИТ • Корпус Бирюлёво</p>
+        <p style="margin-top:4px;"><span class="badge-dev">Обратная связь в разработке</span></p>
+    </footer>
+
+    <script src="data.js"></script>
+</body>
+</html>
